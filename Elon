@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ELON // SYSTEM</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0
+}
+
+body{
+  height:100vh;
+  overflow:hidden;
+  background:#020405;
+  color:#00ff66;
+  font-family:monospace;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* BACKGROUND GRID */
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(#00ff6610 1px,transparent 1px),
+    linear-gradient(90deg,#00ff6610 1px,transparent 1px);
+  background-size:38px 38px;
+  animation:grid 5s linear infinite;
+}
+
+@keyframes grid{
+  to{background-position:0 76px,76px 0}
+}
+
+/* CRT */
+body:after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    #ffffff05 4px
+  );
+}
+
+.scanline{
+  position:fixed;
+  top:-5px;
+  left:0;
+  width:100%;
+  height:2px;
+  background:#00ff66;
+  box-shadow:0 0 20px #00ff66;
+  animation:scan 3s linear infinite;
+  z-index:20;
+}
+
+@keyframes scan{
+  to{top:105%}
+}
+
+.box{
+  width:min(94%,680px);
+  position:relative;
+  z-index:5;
+}
+
+.terminal{
+  background:#020706;
+  border:1px solid #16552f;
+  box-shadow:
+    0 0 40px #00ff6618,
+    inset 0 0 50px #00ff6608;
+  overflow:hidden;
+  transition:.12s;
+}
+
+.top{
+  height:38px;
+  padding:0 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid #123d24;
+  color:#41644b;
+  font-size:9px;
+}
+
+.online{
+  color:#00ff66;
+}
+
+.online i{
+  display:inline-block;
+  width:7px;
+  height:7px;
+  background:#00ff66;
+  border-radius:50%;
+  box-shadow:0 0 10px #00ff66;
+  margin-right:5px;
+}
+
+.logo{
+  text-align:center;
+  padding:20px 0 12px;
+  border-bottom:1px solid #123d24;
+}
+
+.logo h1{
+  color:#e6fff0;
+  font-size:clamp(40px,11vw,68px);
+  letter-spacing:13px;
+  text-shadow:
+    0 0 10px #00ff66,
+    0 0 30px #00ff66;
+}
+
+.logo p{
+  color:#31583c;
+  font-size:8px;
+  letter-spacing:4px;
+}
+
+.content{
+  min-height:410px;
+  padding:24px;
+}
+
+.step{
+  display:none;
+  animation:enter .65s ease;
+}
+
+.step.active{
+  display:block;
+}
+
+@keyframes enter{
+  from{
+    opacity:0;
+    transform:translateY(15px) scale(.97)
+  }
+  to{
+    opacity:1;
+    transform:none
+  }
+}
+
+.num{
+  color:#315b3d;
+  font-size:9px;
+  margin-bottom:12px;
+}
+
+.title{
+  color:#d5eadb;
+  font-size:16px;
+  margin-bottom:20px;
+}
+
+.log{
+  color:#6fa17a;
+  font-size:12px;
+  line-height:2.1;
+}
+
+.g{color:#00ff66}
+.b{color:#42a9ff}
+.r{color:#ff3048}
+.y{color:#d8c65d}
+.d{color:#355d40}
+
+.cursor{
+  display:inline-block;
+  width:7px;
+  height:13px;
+  background:#00ff66;
+  animation:blink .55s infinite;
+  vertical-align:middle;
+}
+
+@keyframes blink{
+  50%{opacity:0}
+}
+
+/* RADAR */
+.radar{
+  width:150px;
+  height:150px;
+  margin:5px auto 22px;
+  border:1px solid #00ff66;
+  border-radius:50%;
+  position:relative;
+  box-shadow:
+    0 0 25px #00ff6630,
+    inset 0 0 35px #00ff6618;
+}
+
+.radar:before{
+  content:"";
+  position:absolute;
+  inset:25px;
+  border:1px solid #00ff6655;
+  border-radius:50%;
+}
+
+.radar:after{
+  content:"";
+  position:absolute;
+  inset:50px;
+  border:1px solid #ff304855;
+  border-radius:50%;
+}
+
+.sweep{
+  position:absolute;
+  width:50%;
+  height:1px;
+  left:50%;
+  top:50%;
+  background:#00ff66;
+  box-shadow:0 0 15px #00ff66;
+  transform-origin:left;
+  animation:rotate 2s linear infinite;
+}
+
+@keyframes rotate{
+  to{transform:rotate(360deg)}
+}
+
+.dot{
+  position:absolute;
+  width:7px;
+  height:7px;
+  background:#ff3048;
+  border-radius:50%;
+  box-shadow:0 0 15px #ff3048;
+  top:30px;
+  right:28px;
+}
+
+/* DEVICE SCANNER */
+.deviceScan{
+  width:180px;
+  height:110px;
+  border:1px solid #237044;
+  margin:0 auto 22px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.phone{
+  width:45px;
+  height:75px;
+  border:2px solid #00ff66;
+  border-radius:7px;
+  box-shadow:0 0 15px #00ff6655;
+}
+
+.deviceBeam{
+  position:absolute;
+  width:100%;
+  height:2px;
+  background:#00ff66;
+  box-shadow:0 0 15px #00ff66;
+  top:0;
+  animation:deviceScan 1.7s linear infinite;
+}
+
+@keyframes deviceScan{
+  to{top:100%}
+}
+
+/* FINGERPRINT */
+.fingerprint{
+  width:110px;
+  height:140px;
+  margin:0 auto 22px;
+  border:2px solid #00ff66;
+  border-radius:50%;
+  position:relative;
+  box-shadow:0 0 25px #00ff6633;
+  animation:finger 1s infinite alternate;
+}
+
+.fingerprint:before{
+  content:"";
+  position:absolute;
+  inset:20px;
+  border:1px solid #00ff66;
+  border-radius:50%;
+}
+
+.fingerprint:after{
+  content:"";
+  position:absolute;
+  inset:42px;
+  border:1px solid #ff3048;
+  border-radius:50%;
+}
+
+@keyframes finger{
+  to{
+    transform:scale(1.08);
+    box-shadow:0 0 35px #00ff6666;
+  }
+}
+
+/* PROGRESS */
+.progress{
+  height:6px;
+  background:#0b1d11;
+  margin-top:20px;
+  overflow:hidden;
+}
+
+.bar{
+  width:0;
+  height:100%;
+  background:linear-gradient(
+    90deg,
+    #00ff66,
+    #008cff,
+    #ff3048
+  );
+  box-shadow:0 0 15px #00ff66;
+}
+
+.percent{
+  text-align:right;
+  color:#416a49;
+  font-size:9px;
+  margin-top:7px;
+}
+
+/* ALERT */
+.alert{
+  text-align:center;
+  padding-top:15px;
+}
+
+.skull{
+  font-size:70px;
+  filter:drop-shadow(0 0 16px #ff3048);
+  animation:skull .75s infinite alternate;
+  margin-bottom:15px;
+}
+
+@keyframes skull{
+  to{transform:scale(1.13)}
+}
+
+.alert h2{
+  color:#ff3048;
+  font-size:24px;
+  text-shadow:
+    0 0 10px #ff3048,
+    0 0 30px #ff0033;
+}
+
+.line{
+  width:80%;
+  height:1px;
+  background:#ff3048;
+  box-shadow:0 0 15px #ff3048;
+  margin:20px auto;
+}
+
+/* FINAL */
+.final{
+  text-align:center;
+  padding-top:25px;
+}
+
+.final .skull{
+  font-size:75px;
+}
+
+.final h2{
+  color:#00ff66;
+  font-size:clamp(20px,6vw,30px);
+  line-height:1.5;
+  text-shadow:0 0 15px #00ff66;
+}
+
+.final span{
+  color:#ff3048;
+  text-shadow:0 0 15px #ff3048;
+}
+
+.final p{
+  color:#416a49;
+  font-size:9px;
+  line-height:1.8;
+  letter-spacing:2px;
+  margin-top:20px;
+}
+
+/* RGB FLASH */
+.greenFlash{
+  background:#00250e!important;
+  box-shadow:
+    inset 0 0 220px #00ff6688,
+    0 0 80px #00ff6655!important;
+}
+
+.blueFlash{
+  background:#00152d!important;
+  box-shadow:
+    inset 0 0 220px #008cff99,
+    0 0 80px #008cff55!important;
+}
+
+.redFlash{
+  background:#300006!important;
+  box-shadow:
+    inset 0 0 230px #ff003caa,
+    0 0 90px #ff003c66!important;
+}
+</style>
+</head>
+
+<body>
+
+<div class="scanline"></div>
+
+<div class="box">
+
+<div class="terminal" id="terminal">
+
+  <div class="top">
+    <span class="online"><i></i>SESSION ACTIVE</span>
+    <span>UNKNOWN NODE</span>
+    <span id="time">00:00</span>
+  </div>
+
+  <div class="logo">
+    <h1>ELON</h1>
+    <p>PRIVATE TERMINAL // SYSTEM ONLINE</p>
+  </div>
+
+  <div class="content">
+
+    <!-- 1 -->
+    <section class="step active">
+      <div class="num">01 // INITIALIZATION</div>
+      <div class="title">Initializing terminal...</div>
+
+      <div class="log">
+        <div class="g">[OK] core interface loaded</div>
+        <div class="g">[OK] scanner module ready</div>
+        <div class="b">[OK] secure channel initialized</div>
+        <div class="d">[•••] searching signal...</div>
+        <br>
+        <div class="g">ELON@node:~$ connect</div>
+        <span class="cursor"></span>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="step">
+      <div class="num">02 // SIGNAL SCAN</div>
+      <div class="title">Scanning nearby device signal...</div>
+
+      <div class="radar">
+        <div class="sweep"></div>
+        <div class="dot"></div>
+      </div>
+
+      <div class="log">
+        <div class="g">[FOUND] signal detected</div>
+        <div class="b">[INFO] signal strength ████████</div>
+        <div class="y">[•••] target locked</div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="step">
+      <div class="num">03 // DEVICE SCAN</div>
+      <div class="title">Scanning device environment...</div>
+
+      <div class="deviceScan">
+        <div class="phone"></div>
+        <div class="deviceBeam"></div>
+      </div>
+
+      <div class="log">
+        <div class="g">[SCAN] system layer .... OK</div>
+        <div class="g">[SCAN] interface ....... OK</div>
+        <div class="b">[SCAN] environment ......</div>
+        <div class="y">[•••] analyzing...</div>
+      </div>
+
+      <div class="progress">
+        <div class="bar" id="bar1"></div>
+      </div>
+
+      <div class="percent" id="p1">0%</div>
+    </section>
+
+    <!-- 4 -->
+    <section class="step">
+      <div class="num">04 // SIGNATURE</div>
+      <div class="title">Scanning device fingerprint...</div>
+
+      <div class="fingerprint"></div>
+
+      <div class="log">
+        <div class="g">[MATCH] signature recognized</div>
+        <div class="b">[MATCH] device verified</div>
+        <div class="r">[ALERT] unknown operator</div>
+        <div class="g">[FOUND] ELON</div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="step">
+      <div class="num">05 // CONNECTION</div>
+      <div class="title">Establishing encrypted session...</div>
+
+      <div class="log">
+        <div class="g">[OK] handshake complete</div>
+        <div class="b">[OK] channel synchronized</div>
+        <div class="y">[•••] authorization pending...</div>
+      </div>
+
+      <div class="progress">
+        <div class="bar" id="bar2"></div>
+      </div>
+
+      <div class="percent" id="p2">0%</div>
+    </section>
+
+    <!-- 6 -->
+    <section class="step">
+      <div class="alert">
+
+        <div class="skull">☠️</div>
+
+        <h2>SECURITY BREACH</h2>
+
+        <div class="line"></div>
+
+        <div class="log">
+          <div class="r">[!] UNAUTHORIZED SESSION</div>
+          <div class="r">[!] EXTERNAL ACCESS DETECTED</div>
+          <div class="g">[+] OPERATOR: ELON</div>
+          <div class="b">[+] CONNECTION ACTIVE</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="step">
+      <div class="final">
+
+        <div class="skull">☠️</div>
+
+        <h2>
+          CONGRATULATIONS!<br>
+          <span>
+            ELON HAS HACKED<br>
+            YOUR PHONE
+          </span>
+        </h2>
+
+        <p>
+          CONNECTION ESTABLISHED<br>
+          SESSION COMPLETE
+        </p>
+
+        <br>
+        <span class="cursor"></span>
+
+      </div>
+    </section>
+
+  </div>
+</div>
+</div>
+
+<script>
+
+const steps=document.querySelectorAll(".step");
+const terminal=document.getElementById("terminal");
+
+let sec=0;
+
+setInterval(()=>{
+  sec++;
+  document.getElementById("time").textContent=
+    "00:"+String(sec).padStart(2,"0");
+},1000);
+
+function show(n){
+  steps.forEach(s=>s.classList.remove("active"));
+  steps[n].classList.add("active");
+}
+
+/* RGB SCREEN FLASH */
+function rgbFlash(){
+
+  const colors=[
+    "greenFlash",
+    "blueFlash",
+    "redFlash",
+    "blueFlash",
+    "greenFlash",
+    "redFlash"
+  ];
+
+  let i=0;
+
+  const flash=setInterval(()=>{
+
+    terminal.classList.remove(
+      "greenFlash",
+      "blueFlash",
+      "redFlash"
+    );
+
+    terminal.classList.add(colors[i]);
+
+    i++;
+
+    if(i>=colors.length){
+
+      clearInterval(flash);
+
+      setTimeout(()=>{
+        terminal.classList.remove(
+          "greenFlash",
+          "blueFlash",
+          "redFlash"
+        );
+      },220);
+
+    }
+
+  },280);
+}
+
+/* progress */
+function progress(bar,p,time){
+
+  let n=0;
+
+  const x=setInterval(()=>{
+
+    n++;
+
+    document.getElementById(bar).style.width=n+"%";
+    document.getElementById(p).textContent=n+"%";
+
+    if(n>=100) clearInterval(x);
+
+  },time/100);
+}
+
+/* TIMELINE */
+
+setTimeout(()=>{
+  show(1);
+  rgbFlash();
+},5000);
+
+setTimeout(()=>{
+  show(2);
+  rgbFlash();
+  progress("bar1","p1",7000);
+},10500);
+
+setTimeout(()=>{
+  show(3);
+  rgbFlash();
+},18500);
+
+setTimeout(()=>{
+  show(4);
+  rgbFlash();
+  progress("bar2","p2",7000);
+},23500);
+
+setTimeout(()=>{
+  show(5);
+  rgbFlash();
+},31500);
+
+setTimeout(()=>{
+  show(6);
+  rgbFlash();
+},36500);
+
+</script>
+
+</body>
+</html>
